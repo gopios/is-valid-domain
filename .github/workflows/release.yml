@@ -20,6 +20,7 @@ jobs:
       - name: Build release binaries
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
+          echo "Building version $VERSION"
           mkdir -p releases
           
           # Build for multiple platforms
@@ -41,12 +42,30 @@ jobs:
               output_name="${output_name}.exe"
             fi
             
-            GOOS=$GOOS GOARCH=$GOARCH go build -o releases/$output_name ./cmd/ivd
+            echo "Building $output_name"
+            GOOS=$GOOS GOARCH=$GOARCH go build -ldflags="-s -w" -o releases/$output_name ./cmd/ivd
+            
+            # Compress binaries
+            if [ $GOOS = "windows" ]; then
+              cd releases
+              zip -q ${output_name%.exe}.zip $output_name
+              rm $output_name
+              cd ..
+            else
+              cd releases
+              tar -czf ${output_name}.tar.gz $output_name
+              rm $output_name
+              cd ..
+            fi
           done
+          
+          ls -la releases/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: releases/*
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
