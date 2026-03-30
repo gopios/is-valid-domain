@@ -11,16 +11,38 @@ This package provides domain validation functionality that determines whether a 
 
 ## Installation
 
+### Quick Install (Linux/macOS)
+
+```bash
+curl -sSL https://raw.githubusercontent.com/gopios/is-valid-domain/master/installer.sh | bash
+```
+
+Or specify a version:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/gopios/is-valid-domain/master/installer.sh | bash -s v1.0.5
+```
+
+### Manual Download
+
+Download the binary for your platform from [GitHub Releases](https://github.com/gopios/is-valid-domain/releases):
+
+```bash
+# Linux x86_64
+wget https://github.com/gopios/is-valid-domain/releases/download/v1.0.5/ivd-v1.0.5-linux-amd64
+sudo mv ivd-v1.0.5-linux-amd64 /usr/local/bin/ivd
+sudo chmod +x /usr/local/bin/ivd
+
+# macOS Apple Silicon
+wget https://github.com/gopios/is-valid-domain/releases/download/v1.0.5/ivd-v1.0.5-darwin-arm64
+sudo mv ivd-v1.0.5-darwin-arm64 /usr/local/bin/ivd
+sudo chmod +x /usr/local/bin/ivd
+```
+
 ### As a Go package
 
 ```bash
 go get github.com/gopios/is-valid-domain
-```
-
-### As a CLI tool
-
-```bash
-go install github.com/gopios/is-valid-domain/cmd/ivd@latest
 ```
 
 ## Usage
