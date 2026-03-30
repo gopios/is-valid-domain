@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.25'
+
+      - name: Build release binaries
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          mkdir -p releases
+          
+          # Build for multiple platforms
+          platforms=(
+            "linux/amd64"
+            "linux/arm64" 
+            "darwin/amd64"
+            "darwin/arm64"
+            "windows/amd64"
+            "windows/arm64"
+          )
+          
+          for platform in "${platforms[@]}"; do
+            GOOS=$(echo $platform | cut -d'/' -f1)
+            GOARCH=$(echo $platform | cut -d'/' -f2)
+            
+            output_name="ivd-${VERSION}-${GOOS}-${GOARCH}"
+            if [ $GOOS = "windows" ]; then
+              output_name="${output_name}.exe"
+            fi
+            
+            GOOS=$GOOS GOARCH=$GOARCH go build -o releases/$output_name ./cmd/ivd
+          done
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: releases/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
