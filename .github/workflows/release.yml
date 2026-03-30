@@ -47,6 +47,11 @@ jobs:
             
             echo "Building $output_name"
             GOOS=$GOOS GOARCH=$GOARCH go build -ldflags="-s -w" -o releases/$output_name ./cmd/ivd
+            
+            # Make executable for non-Windows platforms
+            if [ $GOOS != "windows" ]; then
+              chmod +x releases/$output_name
+            fi
           done
           
           ls -la releases/
