@@ -7,13 +7,8 @@ import (
 	"os"
 	"strings"
 
-	_ "embed"
-
 	ivd "github.com/gopios/is-valid-domain"
 )
-
-//go:embed ../../public_suffix_list.dat
-var pslData string
 
 func main() {
 	batchFlag := flag.String("batch", "", "File containing domains")
@@ -21,13 +16,7 @@ func main() {
 
 	args := flag.Args()
 
-	validator := ivd.New()
-
-	if err := validator.LoadFromReader(strings.NewReader(pslData)); err != nil {
-		log.Fatalf("Failed to load embedded PSL: %v", err)
-	}
-
-	fmt.Printf("Loaded %d suffixes\n", validator.SuffixCount())
+	validator := ivd.NewWithPSL()
 
 	// Batch mode
 	if *batchFlag != "" {
@@ -60,11 +49,5 @@ func main() {
 }
 
 func printResult(domain string, result ivd.ValidationResult) {
-	status := map[ivd.ValidationResult]string{
-		ivd.Invalid:   "INVALID",
-		ivd.Valid:     "VALID",
-		ivd.Subdomain: "SUBDOMAIN",
-	}[result]
-
-	fmt.Printf("ivd %s - %d (%s)\n", domain, int(result), status)
+	fmt.Printf("%d\n", int(result))
 }

@@ -32,17 +32,12 @@ package main
 
 import (
     "fmt"
-    "strings"
     ivd "github.com/gopios/is-valid-domain"
 )
 
 func main() {
-    validator := ivd.New()
-    
-    // Load from embedded PSL data
-    if err := validator.LoadFromReader(strings.NewReader(pslData)); err != nil {
-        panic(err)
-    }
+    // Create validator with embedded PSL data (recommended)
+    validator := ivd.NewWithPSL()
     
     // Validate single domain
     result := validator.Validate("example.com")
@@ -58,19 +53,47 @@ func main() {
 }
 ```
 
+### Advanced Usage (Custom PSL Data)
+
+```go
+package main
+
+import (
+    "fmt"
+    "strings"
+    ivd "github.com/gopios/is-valid-domain"
+)
+
+func main() {
+    // Create validator and load custom PSL data
+    validator := ivd.New()
+    
+    // Load from string
+    pslData := "com\norg\n!example.com"
+    if err := validator.LoadFromReader(strings.NewReader(pslData)); err != nil {
+        panic(err)
+    }
+    
+    // Load from file
+    // if err := validator.LoadFromFile("custom_psl.dat"); err != nil {
+    //     panic(err)
+    // }
+    
+    result := validator.Validate("example.com")
+    fmt.Printf("example.com: %v\n", result)
+}
+```
+
 ### CLI Usage
 
 #### Single Domain Validation
 
 ```bash
 ivd example.com
-# Output: ivd example.com - 1 (VALID)
-
-ivd sub.example.com  
-# Output: ivd sub.example.com - 2 (SUBDOMAIN)
+# Output: 2
 
 ivd invalid..com
-# Output: ivd invalid..com - 0 (INVALID)
+# Output: 0
 ```
 
 #### Batch Validation
@@ -80,9 +103,8 @@ Create a file with domains (one per line):
 ```
 domains.txt
 example.com
-sub.example.com
-test.org
 invalid..com
+test.org
 ```
 
 Run batch validation:
@@ -90,11 +112,17 @@ Run batch validation:
 ```bash
 ivd -batch domains.txt
 # Output:
-# ivd example.com - 1 (VALID)
-# ivd sub.example.com - 2 (SUBDOMAIN)
-# ivd test.org - 1 (VALID)
-# ivd invalid..com - 0 (INVALID)
+# 2
+# 0
+# 2
 ```
+
+#### Exit Codes
+
+The CLI returns the following numeric values:
+- `0` - INVALID
+- `1` - VALID  
+- `2` - SUBDOMAIN
 
 ## API Reference
 
@@ -112,8 +140,14 @@ const (
 
 ### Methods
 
+#### `NewWithPSL() *Validator`
+Creates a new validator instance and automatically loads the embedded Public Suffix List. **Recommended for most use cases.**
+
 #### `New() *Validator`
-Creates a new validator instance.
+Creates a new validator instance without loading any PSL data. Use this if you want to load custom PSL data.
+
+#### `LoadFromFile(path string) error`
+Loads Public Suffix List data from a file.
 
 #### `LoadFromReader(r io.Reader) error`
 Loads Public Suffix List data from an io.Reader.

@@ -14,10 +14,11 @@ func (v *Validator) checkRoot(domain, suffix string) ValidationResult {
 		return Invalid
 	}
 
-	root := strings.Join(parts[len(parts)-len(suffixParts)-1:], ".")
-
-	if domain == root {
+	// If domain has exactly one more part than suffix, it's a registered domain
+	if len(parts) == len(suffixParts)+1 {
 		return Valid
 	}
+
+	// Otherwise it's a subdomain
 	return Subdomain
 }

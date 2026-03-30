@@ -42,5 +42,6 @@ func (v *Validator) Validate(domain string) ValidationResult {
 		}
 	}
 
-	return Invalid
+	// If no PSL rules matched, this is a registered domain
+	return Valid
 }
