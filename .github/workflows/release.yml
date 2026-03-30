@@ -47,19 +47,6 @@ jobs:
             
             echo "Building $output_name"
             GOOS=$GOOS GOARCH=$GOARCH go build -ldflags="-s -w" -o releases/$output_name ./cmd/ivd
-            
-            # Compress binaries
-            if [ $GOOS = "windows" ]; then
-              cd releases
-              zip -q ${output_name%.exe}.zip $output_name
-              rm $output_name
-              cd ..
-            else
-              cd releases
-              tar -czf ${output_name}.tar.gz $output_name
-              rm $output_name
-              cd ..
-            fi
           done
           
           ls -la releases/
