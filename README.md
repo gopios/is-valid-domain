@@ -2,6 +2,27 @@
 
 A Go library and CLI tool for validating domain names against the Public Suffix List (PSL).
 
+## Features
+- Public Suffix List support
+- Wildcard + exception rules
+- Batch validation
+- Offline support (embedded PSL)
+- Single binary
+- Fast (as i have not tested with all alternatives, i cant say it is the fastest)
+
+# Why
+- OS and Browser development
+- DNS analysis
+- Domain scraping cleanup
+- Cybersecurity pipelines
+- Log processing
+
+## Useful Links
+
+- [GitHub Repository](https://github.com/gopios/is-valid-domain)
+- [GoDoc Documentation](https://pkg.go.dev/github.com/gopios/is-valid-domain)
+- [Public Suffix List](https://publicsuffix.org/)
+
 ## Overview
 
 This package provides domain validation functionality that determines whether a domain is:
